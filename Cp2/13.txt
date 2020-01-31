@@ -1,0 +1,67 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: sort3
+"""
+
+fin = open ('sort3.in', 'r')
+fout = open ('sort3.out', 'w')
+
+n = int(fin.readline())
+c = 0
+seq = []
+cn = [0]*4
+i,j = 0,0
+for k in range(n):
+    m = int(fin.readline())
+    seq.append(m)
+    cn[m]+=1
+    
+k = cn[1]
+i = 0
+while i<cn[1] and k<cn[1]+cn[2]:
+    while i<cn[1] and seq[i]!=2:
+        i+=1
+    while k<cn[1]+cn[2] and seq[k]!=1:
+        k+=1
+    if k!=cn[1]+cn[2] and i!=cn[1]:
+        seq[i],seq[k] = seq[k],seq[i]
+        c+=1
+              
+k = cn[1]+cn[2]
+i = 0
+while i<cn[1] and k<cn[1]+cn[2]+cn[3]:
+    while i<cn[1] and seq[i]==1:
+        i+=1
+    while k<cn[1]+cn[2]+cn[3] and seq[k]!=1:
+        k+=1
+    if i!=cn[1] and k!=cn[1]+cn[2]+cn[3]:
+        seq[k],seq[i]=seq[i],seq[k]
+        c+=1
+
+k = cn[1]
+i = 0
+while i<cn[1] and k<cn[1]+cn[2]:
+    while i<cn[1] and seq[i]==1:
+        i+=1
+    while k<cn[1]+cn[2] and seq[k]!=1:
+        k+=1
+    if k!=cn[1]+cn[2] and i!=cn[1]:
+        seq[i],seq[k] = seq[k],seq[i]
+        c+=1
+
+j = cn[1]
+k = cn[1]+cn[2]
+while j<cn[1]+cn[2] and k<cn[1]+cn[2]+cn[3]:
+    while j<cn[1]+cn[2] and seq[j]!=3:
+        j+=1
+    while k<cn[1]+cn[2]+cn[3] and seq[k]!=2:
+        k+=1
+    if j!=cn[1]+cn[2] and k!=cn[1]+cn[2]+cn[3]:
+        seq[k],seq[j]=seq[j],seq[k]
+        c+=1
+
+fout.write(str(c)+'\n')
+
+fin.close()
+fout.close()

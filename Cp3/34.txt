@@ -1,0 +1,35 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: range
+"""
+fin = open ('range.in', 'r')
+fout = open ('range.out', 'w')
+
+n = int(fin.readline().strip())
+l = []
+for i in range(n):
+    row = []
+    line = fin.readline().strip()
+    for c in line:
+        row.append(int(c))
+    
+    l.append(row)
+    
+count = {}
+
+for k in range(1,n+1):
+    count[k] = set()
+    for i in range(k-1,n):
+        for j in range(k-1,n):
+            if l[i][j] == 1 and k == 1:
+                count[k].add((i,j))
+            elif l[i][j] == 1 and (i-1,j) in count[k-1] and (i,j-1) in count[k-1] and (i-1,j-1) in count[k-1]:
+                count[k].add((i,j))
+
+for k in range(2,n+1):    
+    if len(count[k])>0:
+        fout.write(str(k)+" "+str(len(count[k]))+"\n")
+
+fin.close()
+fout.close()

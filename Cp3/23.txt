@@ -1,0 +1,117 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: spin
+"""
+fin = open ('spin.in', 'r')
+fout = open ('spin.out', 'w')
+
+wheels = []
+line = fin.readline()
+while line:
+    linelist = list(map(int,line.split()))
+    wedge = []
+    for i in range(linelist[1]):
+        wedge.append((linelist[2+i*2],(linelist[2+i*2]+linelist[3+i*2]) % 360))
+    wheels.append((linelist[0],wedge))
+    line = fin.readline()
+    
+def prime(n):
+    primelist = []
+    primecount = 0
+    isPrime = [True]*(n+1)
+    isPrime[0], isPrime[1] = False, False
+    for i in range(2,n+1):
+        if isPrime[i]:
+            primelist.append(i)
+            primecount += 1
+        for j in range(primecount):
+            if i*primelist[j]>n:
+                break
+            isPrime[i*primelist[j]] = False
+            if i % primelist[j] == 0:
+                break
+    
+    return primelist
+            
+            
+def primedecomp(n,prime):
+    decomp = {}
+    i = 0
+    while n>1:
+        while n % prime[i]!=0:
+            i += 1
+        n = n // prime[i]
+        if prime[i] not in decomp:
+            decomp[prime[i]] = 1
+        else:
+            decomp[prime[i]] += 1
+    
+    return decomp
+
+def turnwedge(d,wedge):
+    res = []
+    for w in wedge:
+        res.append(((w[0] + d) % 360, (w[1] + d) % 360))
+    return res
+
+def joinwedge(w1,w2):
+    res = []
+    for w in w1:
+        for ww in w2:
+            if w[0]<=w[1] and ww[0]<=ww[1]:
+                if w[0]<=ww[0] and ww[0]<=w[1] and w[1]<=ww[1]:
+                    res.append((ww[0],w[1]))
+                elif ww[0]<=w[0] and w[0]<=ww[1] and ww[1]<=w[1]:
+                    res.append((w[0],ww[1]))
+                elif w[0]<=ww[0] and ww[1]<=w[1]:
+                    res.append((ww[0],ww[1]))
+                elif ww[0]<=w[0] and w[1]<=ww[1]:
+                    res.append((w[0],w[1]))
+            elif w[0]>w[1] and ww[0]<=ww[1]:
+                if ww[0]>=w[0] or ww[1]<=w[1]:
+                    res.append((ww[0],ww[1]))
+                elif ww[0]<=w[1] and w[1]<=ww[1] and ww[1]<w[0]:
+                    res.append((ww[0],w[1]))
+                elif ww[0]<=w[0] and w[0]<=ww[1] and w[1]<ww[0]:
+                    res.append((w[0],ww[1]))
+                elif ww[0]<=w[1] and ww[1]>=w[0]:
+                    res.append((w[0],ww[1]))
+                    res.append((ww[0],w[1]))
+            elif w[0]<=w[1] and ww[0]>ww[1]:
+                if w[0]>=ww[0] or w[1]<=ww[1]:
+                    res.append((w[0],w[1]))
+                elif w[0]<=ww[1] and ww[1]<=w[1] and w[1]<ww[0]:
+                    res.append((w[0],ww[1]))
+                elif w[0]<=ww[0] and ww[0]<=w[1] and ww[1]<w[0]:
+                    res.append((ww[0],w[1]))
+                elif w[0]<=ww[1] and w[1]>=ww[0]:
+                    res.append((ww[0],w[1]))
+                    res.append((w[0],ww[1]))
+            elif w[0]>w[1] and ww[0]>ww[1]:
+                if w[0]>=ww[0] and w[1]>=ww[1]:
+                    res.append((w[0],ww[1]))
+                elif w[0]>=ww[0] and w[1]<ww[1]:
+                    res.append((w[0],w[1]))
+                elif w[0]<ww[0] and w[1]>=ww[1]:
+                    res.append((ww[0],ww[1]))
+                elif w[0]<ww[0] and w[1]<ww[1]:
+                    res.append((ww[0],w[1]))
+    return res
+
+q = False
+
+for i in range(360):
+    tempwedge = turnwedge(wheels[0][0] * i % 360, wheels[0][1])
+    for j in range(1,5):
+        tempwedge = joinwedge(tempwedge,turnwedge(wheels[j][0] * i % 360,wheels[j][1]))
+    if tempwedge:
+        fout.write(str(i)+'\n')
+        q = True
+        break
+
+if not q:
+	fout.write('none\n')
+
+fin.close()
+fout.close()

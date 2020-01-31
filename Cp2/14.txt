@@ -1,0 +1,55 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: holstein
+"""
+
+fin = open ('holstein.in', 'r')
+fout = open ('holstein.out', 'w')
+
+def checkf(vc,vt,node):
+    n = len(vt)
+    m = len(vc)
+    for i in range(n):
+        s = 0
+        for j in range(m):
+            s+=node[j]*vc[j][i]
+        if s<vt[i]:
+            return False
+    return True
+
+n = int(fin.readline())
+vt = list(map(int,fin.readline().split()))
+m = int(fin.readline())
+vc = []
+for _ in range(m):
+    vc.append(list(map(int,fin.readline().split())))
+
+curr = [[0]*m]
+
+def solve(curr):
+    vis = set()
+    next = []
+    for node in curr:
+        for i in range(m):
+            if node[i]!=1:
+                nodenew = node[:i]+[1]+node[i+1:]
+                if tuple(nodenew) in vis:
+                    continue
+                next.append(nodenew)
+                vis.add(tuple(nodenew))
+                if checkf(vc,vt,nodenew):
+                    s = ''
+                    s += str(sum(nodenew))
+                    for j in range(m):
+                         if nodenew[j]==1:
+                             s+=' '+str(j+1)
+                    s += '\n'
+                    fout.write(s)
+                    return
+    solve(next)
+
+solve(curr)
+
+fin.close()
+fout.close()

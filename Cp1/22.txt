@@ -1,0 +1,19 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: ride
+"""
+def trans47(s):
+    res = 1
+    for c in s:
+        res*=ord(c)-ord('A')+1
+    return res % 47
+fin = open ('ride.in', 'r')
+fout = open ('ride.out', 'w')
+comet = fin.readline().rstrip()
+follow = fin.readline().rstrip()
+if trans47(comet)==trans47(follow):
+    fout.write ('GO'+'\n')
+else:
+    fout.write ('STAY'+'\n')
+fout.close()

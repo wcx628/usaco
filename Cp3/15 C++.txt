@@ -1,0 +1,58 @@
+/*
+ID: george.34
+LANG: C++
+PROG: stamps
+*/
+
+#include<fstream>
+#include<vector>
+#include<stdlib.h>
+using namespace std;
+
+int n,k,s[50];
+vector<int> minst;
+
+int compare (const void *a, const void *b)
+{
+    return ( *(int*)a - *(int*)b );
+}
+
+int main()
+{
+#ifndef LOCAL
+    ifstream cin("stamps.in");
+    ofstream cout("stamps.out");
+#endif
+    cin >> k >> n;
+    for(int i=0; i<n; i++){ cin >> s[i]; }
+    qsort(s, n, sizeof(int), compare);
+    minst.assign(k*s[n-1]+1, 0);
+    int longstr = 0, curr = 0;
+    bool f = false;
+    for(int i=1; i<k*s[n-1]+1; i++)
+    {
+        int tmin = k;
+        for(int j=0; j<n; j++)
+        {
+            if(s[j] > i) break;
+            if(tmin > minst[i-s[j]] and minst[i-s[j]] != -1) tmin = minst[i-s[j]];
+        }
+        if(tmin < k)
+        {
+            minst[i] = tmin + 1;
+            if(f) longstr = max(longstr, ++curr);
+            else {
+                f = true;
+                curr = 1;
+            }
+        }
+        else {
+            f = false;
+            minst[i] = -1;
+            curr = 0;
+        }
+    }
+    
+    cout << longstr << endl;
+    return 0;
+}

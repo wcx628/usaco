@@ -1,0 +1,38 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: kimbits
+"""
+fin = open ('kimbits.in', 'r')
+fout = open ('kimbits.out', 'w')
+
+def getstr(n,l,i,nc):
+    if 2**l >= i:
+        return bin(i-1)[2:].zfill(n)
+    for j in range(1,n+1):
+        if nc[j][l]>=i and nc[j-1][l]<i:
+            ri = i - nc[j-1][l]
+            print(j,l,ri)
+            return ('1'+getstr(j-1,l-1,ri,nc)).zfill(n)
+
+n,l,i = map(int,fin.readline().split())
+nc = [[0]*(l+1) for _ in range(n+1)]
+for j in range(l+1):
+    nc[j][j] = 2**j
+for j in range(n+1):
+    nc[j][0] = 1
+
+for j in range(n+1):
+    for k in range(min(l+1,j+1)):
+        if k==j or k==0:
+            pass
+        else:
+            nc[j][k] = nc[j-1][k-1] + nc[j-1][min(k,j-1)]
+            
+if 2**l>=i:
+    fout.write(bin(i-1)[2:].zfill(n)+'\n')
+else:
+    fout.write(getstr(n,l,i,nc)+'\n')
+
+fin.close()
+fout.close()

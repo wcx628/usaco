@@ -1,0 +1,44 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: contact
+"""
+fin = open ('contact.in', 'r')
+fout = open ('contact.out', 'w')
+
+a,b,n = map(int,fin.readline().split())
+s = ''
+line = fin.readline().rstrip()
+while line:
+    s += line
+    line = fin.readline().rstrip()
+    
+patterndict = {}
+for i in range(2**b):
+    for j in range(a,b+1):
+        patterndict[bin(i)[2:].zfill(j)] = 0
+
+for i in range(len(s)):
+    for j in range(a,b+1):
+        if i+j<=len(s):
+            patterndict[s[i:i+j]]+=1
+            
+freq = sorted(set(patterndict.values()),reverse=True)
+for f in freq[0:n]:
+    if f == 0:
+        break
+    fout.write(str(f)+'\n')
+    keys = []
+    for k,v in patterndict.items():
+        if v == f:
+            keys.append(k)
+    keys = sorted(keys,key = lambda x:(len(x),int(x,2)))
+    for j in range(len(keys) // 6):
+        fout.write(' '.join(keys[j*6:j*6+6])+'\n')
+    if len(keys) % 6 != 0 and len(keys) // 6==0:
+        fout.write(' '.join(keys[0:])+'\n')
+    elif len(keys) % 6 != 0:
+        fout.write(' '.join(keys[j*6+6:])+'\n')
+
+fin.close()
+fout.close()

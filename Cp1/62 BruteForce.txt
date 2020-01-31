@@ -1,0 +1,75 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: pprime
+"""
+
+fin = open ('pprime.in', 'r')
+fout = open ('pprime.out', 'w')
+
+def nprime(n):
+    prime = []
+    isPrime = [True]*(n+1)
+    for i in range(2,n+1):
+        if isPrime[i]:
+            prime.append(i)
+        for p in prime:
+            if p*i>n:
+                break
+            isPrime[p*i]=False
+            if i % p==0:
+                break
+                
+    return prime
+
+def isPrime(p,prime):
+    if p<2:
+        return False
+    for i in prime:
+        if i>p**0.5:
+            break
+        if p % i==0 and p!=i:
+            return False
+    return True
+
+
+a,b = map(int,fin.readline().split())
+
+nb = len(str(b))
+na = len(str(a))
+
+if a>=b:
+    a,b = b,a
+
+prime = nprime(int(b**0.5))
+
+pprime = [2,3,5,7,11]
+for i in range(1,10,2):
+    for j in range(10):
+        num = 100*i+10*j+i
+        if isPrime(num,prime):
+            pprime.append(num)
+
+for i in range(1,10,2):
+    for j in range(10):
+        for k in range(10):
+            num = 10000*i+1000*j+100*k+10*j+i
+            if isPrime(num,prime):
+                pprime.append(num)
+
+for i in range(1,10,2):
+    for j in range(10):
+        for k in range(10):
+            for l in range(10):
+                num = 1000000*i+100000*j+10000*k+1000*l+100*k+10*j+i
+                if isPrime(num,prime):
+                    pprime.append(num)
+
+for i in pprime:
+    if i>b:
+        break
+    elif i>=a:
+        fout.write(str(i)+'\n')    
+
+fin.close()
+fout.close()

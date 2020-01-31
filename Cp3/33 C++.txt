@@ -1,0 +1,239 @@
+/*
+ID: george.34
+PROG: camelot
+LANG: C++
+*/
+#include <functional>
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <tuple>
+#include <queue>
+#include <unordered_set>
+
+using namespace std;
+
+// Calculating the numeric number position
+int calcpos(char c, int a, int b)
+{
+	return (c - 'A') * b + a - 1;
+}
+
+// Calculating the coordinates position
+tuple<int, int> revcal(int a, int b)
+{
+	tuple<int, int> ans;
+	get<0>(ans) = a / b;
+	get<1>(ans) = a % b;
+	return ans;
+}
+
+void printq(queue<int> q)
+{
+	cout<<"[";
+	queue<int> qc(q);
+	while (!qc.empty()){
+		cout<<qc.front()<<", ";
+		qc.pop();
+	}
+	cout<<"]"<<endl;
+}
+
+int process()
+{
+	int n,m,i,j,k,temp=0;
+	char c;
+	vector<vector<int>> bmap, fast, kingcost;
+	int kingpos, shortest=10000;
+	vector<int> knightpos, kingdist, mpkc;
+	vector<bool> visited;
+	tuple<int,int> coord, knpos, kpos, bpos;
+	unordered_set<int> knightposset;
+	int drknight[8][2]={
+		{1,2},
+		{2,1},
+		{-1,2},
+		{2,-1},
+		{1,-2},
+		{-2,1},
+		{-1,-2},
+		{-2,-1},
+	};
+	queue<int> q;
+
+	ifstream fin ("camelot.in");
+	ofstream fout ("camelot.out");
+
+	fin>>n>>m;
+	bmap.resize(m*n);
+	for(i=0;i<m*n;i++)
+	{
+		coord = revcal(i,n);
+		for(j=0;j<8;j++)
+		{
+			if ((get<0>(coord) + drknight[j][0]>=0) && (get<0>(coord) + drknight[j][0]<m) && \
+					(get<1>(coord) + drknight[j][1]>=0) && (get<1>(coord) + drknight[j][1]<n)){
+				bmap[i].push_back(i+drknight[j][0]*n+drknight[j][1]);
+			}
+		}
+	}
+	fin>>c>>i;
+	kingpos = calcpos(c,i,n);
+
+	while (fin>>c>>i)
+	{
+		knightpos.push_back(calcpos(c,i,n));
+		knightposset.insert(calcpos(c,i,n));
+	}
+
+	kingdist.resize(m*n);
+	fast.resize(m*n);
+	kingcost.resize(m*n);
+	mpkc.resize(m*n);
+	for(i=0;i<m*n;i++)
+	{
+		coord = revcal(i,n);
+		kpos = revcal(kingpos,n);
+		kingdist[i] = max(abs(get<0>(kpos)-get<0>(coord)), abs(get<1>(kpos)-get<1>(coord)));
+	}
+	for(i=0;i<m*n;i++)
+	{
+		fast[i].resize(m*n);
+		kingcost[i].resize(m*n);
+		for(j=0;j<m*n;j++)
+		{
+			if (i==j){
+				fast[i][j] = 0;
+				kingcost[i][j] = kingdist[j];
+			}
+			else{
+				fast[i][j] = 10000;
+				kingcost[i][j] = 10000;
+			}
+		}
+	}
+
+	visited.resize(m*n);
+	for(i=0;i<m*n;++i)
+	{
+		fill(visited.begin(), visited.end(), false);
+		q.push(i);
+		while (!q.empty())
+		{
+			j = q.front();
+			q.pop();
+			for(k=0;k<bmap[j].size();k++)
+			{
+				if (fast[i][bmap[j][k]] > fast[i][j] + 1){
+					fast[i][bmap[j][k]] = fast[i][j] + 1;
+					if (!visited[bmap[j][k]]){
+						q.push(bmap[j][k]);
+						visited[bmap[j][k]] = true;
+					}
+				}
+				if (kingcost[i][bmap[j][k]] > min(kingdist[bmap[j][k]] + fast[i][bmap[j][k]], kingcost[i][j] + 1)){
+					kingcost[i][bmap[j][k]] = min(kingdist[bmap[j][k]] + fast[i][bmap[j][k]], kingcost[i][j] + 1);
+				}
+			}
+		}
+	}
+
+//	for(i=0;i<n*m;i++) fout<<"minimum cost from 28 to "<<i<<": "<<kingdist[i]<<endl;
+
+	for(k=0;k<knightpos.size();k++)
+	{
+		for(i=0;i<m*n;i++){
+			kingcost[knightpos[k]][i] = kingcost[knightpos[k]][i] - fast[knightpos[k]][i];
+		}
+	}
+
+	for(i=0;i<n*m;i++)
+	{
+		temp = 10000;
+		for(j=0;j<knightpos.size();j++)
+		{
+			if(temp>kingcost[knightpos[j]][i]){
+				temp = kingcost[knightpos[j]][i];
+			}
+		}
+		mpkc[i] = temp;
+	}
+
+
+//	fout<<"kingpos: "<<kingpos<<endl;
+//	for(i=0;i<m*n;i++)
+//	{
+//		fout<<"Link to point "<<i<<": ";
+//		for(auto &l: bmap[i])
+//		{
+//			fout<<l<<", ";
+//		}
+//		fout<<endl;
+//	}
+
+//	kpos = revcal(kingpos,n);
+//  for(k=0;k<knightpos.size();k++)
+//    {
+//    	knpos = revcal(knightpos[k],n);
+//    	kd = max(abs(get<0>(kpos)-get<0>(knpos)), abs(get<1>(kpos)-get<1>(knpos)));
+//    	if (kd<closestknight) closestknight = kd;
+//    }
+//
+//    for(i=0;i<m*n;i++)
+//    {
+//    	bpos = revcal(i,n);
+//    	if (max(abs(get<0>(kpos)-get<0>(bpos)), abs(get<1>(kpos)-get<1>(bpos)))>closestknight){
+//    		continue;
+//    	}
+//    	else{
+//    		ppos.push_back(i);
+//    	}
+//  }
+
+    if (find(knightpos.begin(), knightpos.end(), kingpos) != knightpos.end()){
+    	for(i=0;i<m*n;i++)
+    	{
+    		temp = 0;
+    		for(k=0;k<knightpos.size();k++){
+    			temp += fast[i][knightpos[k]];
+    		}
+    		if (temp<shortest) shortest = temp;
+    	}
+    }
+    else{
+    	for(i=0;i<m*n;i++)
+    	{
+    		temp = mpkc[i];
+//    		fout<<ppos[i]<<endl;
+			for(k=0;k<knightpos.size();k++){
+				temp += fast[i][knightpos[k]];
+				if(temp>shortest){
+					break;
+				}
+			}
+			if(temp<shortest){
+				shortest = temp;
+			}
+    	}
+    }
+
+    if (knightpos.size() == 0) shortest = 0;
+
+    fout<<shortest<<endl;
+
+    fin.close();
+    fout.close();
+	return 0;
+}
+
+// Graph Implementation using STL
+int main()
+{
+	// vector of graph edges as per above diagram.
+	// Please note that initialization vector in below format will
+	// work fine in C++11, C++14, C++17 but will fail in C++98.
+	process();
+
+	return 0;
+}

@@ -1,0 +1,48 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: fracdec
+"""
+
+fin = open ('fracdec.in', 'r')
+fout = open ('fracdec.out', 'w')
+
+n,d = map(int, fin.readline().split())
+intp,r = divmod(n,d)
+strint = str(intp)+'.'
+r*=10
+rd = {}
+t = 0
+j = -1
+s = ''
+if r==0:
+    s += '0'
+while r!=0:
+    if r in rd:
+        j = rd[r]
+        break
+    rd[r] = t
+    if r<d:
+        r*=10
+        s += '0'
+        t+=1
+    else:
+        c,r = divmod(r,d)
+        s += str(c)
+        t+=1
+        r*=10
+
+if j!=-1:
+    s = s[0:j]+'('+s[j:t]+')'
+
+s = strint+s
+l = len(s)
+c = 0
+while l-c>76:
+    fout.write(s[c:c+76]+'\n')
+    c+=76
+ 
+fout.write(s[c:l]+'\n')
+
+fin.close()
+fout.close()

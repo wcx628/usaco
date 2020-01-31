@@ -1,0 +1,28 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: nocows
+"""
+
+fin = open ('nocows.in', 'r')
+fout = open ('nocows.out', 'w')
+
+n,k = map(int, fin.readline().split())
+mode = 9901
+
+if n % 2==0:
+    fout.write('0\n')
+else:
+    dp = [[0]*(n // 2+1) for _ in range(k)]
+    for j in range(k):
+        dp[j][0] = 1
+    
+    for i in range(1,k):
+        for j in range(1,n // 2 + 1):
+            for l in range(j):
+                dp[i][j] = (dp[i][j]+(dp[i-1][l] % mode)*(dp[i-1][j-1-l] % mode)) % mode        
+
+    fout.write(str((dp[k-1][n // 2] - dp[k-2][n // 2] + mode) % mode) + '\n')
+
+fin.close()
+fout.close()

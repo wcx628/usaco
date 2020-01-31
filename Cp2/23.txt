@@ -1,0 +1,41 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: runround
+"""
+
+fin = open ('runround.in', 'r')
+fout = open ('runround.out', 'w')
+
+def runa(n):
+    s = str(n)
+    nl = len(s)
+    vis = set()
+    vis.add(0)
+    num = set()
+    num.add(int(s[0]))
+    c = s[0]
+    i = 0
+    while len(vis)<nl:
+        cn = (int(c) + i) % nl
+        if cn in vis or int(s[cn]) in num:
+            return False
+        else:
+            vis.add(cn)
+            i = cn
+            num.add(int(s[cn]))
+        c = s[cn]
+    
+    if (int(c)+i) % nl==0:
+        return True
+    
+    return False
+
+n = int(fin.readline())+1
+while not runa(n):
+    n+=1
+
+fout.write(str(n)+'\n')
+
+fin.close()
+fout.close()

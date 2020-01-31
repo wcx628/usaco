@@ -1,0 +1,31 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: frac1
+"""
+
+fin = open ('frac1.in', 'r')
+fout = open ('frac1.out', 'w')
+
+def gcd(a,b):
+    if a==0 or b==0:
+        return 0
+    if a % b==0:
+        return b
+    return gcd(b, a % b)
+
+n = int(fin.readline())
+
+res = [(0,1),(1,1)]
+for i in range(1,n+1):
+    for j in range(1,i):
+        if gcd(i,j)==1:
+            res.append((j,i))
+
+res = sorted(res,key=lambda x: x[0]*1.0/x[1])
+
+for f in res:
+    fout.write(str(f[0])+'/'+str(f[1])+'\n')
+
+fin.close()
+fout.close()

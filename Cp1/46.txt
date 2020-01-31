@@ -1,0 +1,32 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: skidesign
+"""
+
+fin = open ('skidesign.in', 'r')
+fout = open ('skidesign.out', 'w')
+
+n = int(fin.readline())
+hill = []
+for _ in range(n):
+    hill.append(int(fin.readline()))
+
+hill = sorted(hill)
+ma = 2**31-1
+for i in range(hill[0],hill[-1]-16):
+    cr = 0
+    for j in hill:
+        if j<i:
+            cr += (i-j)**2
+        elif j>i+17:
+            cr += (j-i-17)**2
+    ma = min(cr,ma)
+
+if hill[-1]-17<=hill[0]:
+    ma = 0
+
+fout.write(str(ma)+'\n')
+
+fin.close()
+fout.close()

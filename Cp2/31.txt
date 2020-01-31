@@ -1,0 +1,43 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: prefix
+"""
+
+fin = open ('prefix.in', 'r')
+fout = open ('prefix.out', 'w')
+
+dic = set()
+
+while True:
+    line = fin.readline().split()
+    if line[0] == '.':
+        break
+    for w in line:
+        dic.add(w)
+
+s = ''
+while True:
+    line = fin.readline().rstrip()
+    if not line:
+        break
+    s += line
+
+reach = set()
+reach.add(0)
+curr = [0]
+while curr:
+    nex = []
+    for i in curr:
+        for j in dic:
+            if j==s[i:i+len(j)]:
+                if i+len(j) not in reach:
+                    reach.add(i+len(j))
+                    nex.append(i+len(j))
+                
+    curr = nex
+    
+fout.write(str(max(reach))+'\n')
+
+fin.close()
+fout.close()

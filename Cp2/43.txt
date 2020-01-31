@@ -1,0 +1,100 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: cowtour
+"""
+
+fin = open ('cowtour.in', 'r')
+fout = open ('cowtour.out', 'w')
+
+def calcdist(a,b):
+    return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
+
+n = int(fin.readline())
+cood = []
+for i in range(n):
+    cood.append(tuple(map(int, fin.readline().split())))
+
+pmap = []
+for i in range(n):
+    pmap.append(fin.readline().rstrip())
+
+vis = set([0])
+farms = [set([0])]
+s = 0
+
+while len(vis)<n:
+    f = True
+    while f:
+        f = False
+        tps = farms[s].copy()
+        for i in tps:
+            for j in range(n):
+                if pmap[i][j] == '1' and j not in tps:
+                    farms[s].add(j)
+                    vis.add(j)
+                    f = True
+
+    s += 1
+    for i in range(n):
+        if i not in vis:
+            farms.append(set([i]))
+            vis.add(i)
+            break
+            
+dist = [[0] * n for _ in range(n)]
+
+for i in range(n):
+    for j in range(i,n):
+        dist[i][j] = calcdist(cood[i],cood[j])
+        dist[j][i] = dist[i][j]
+        
+shortpath = [[0] * n for _ in range(n)]
+for s in range(len(farms)):
+    for i in farms[s]:
+        for j in farms[s]:
+            if pmap[i][j] == '1':
+                shortpath[i][j] = dist[i][j]
+            elif i!=j:
+                shortpath[i][j] = 2**31
+
+d2 = 0
+for s in range(len(farms)):
+    for k in farms[s]:
+        for i in farms[s]:
+            for j in farms[s]:
+                if shortpath[i][k] + shortpath[k][j]<shortpath[i][j]:
+                    shortpath[i][j] = shortpath[i][k] + shortpath[k][j]
+
+for s in range(len(farms)):
+    for i in farms[s]:
+        for j in farms[s]:
+            if shortpath[i][j] < 2**31 and shortpath[i][j] > d2:
+                d2 = shortpath[i][j]
+
+diameter = 2**31
+for s1 in range(len(farms)-1):
+    for s2 in range(s1+1,len(farms)):
+        for i in farms[s1]:
+            farthest1 = 0
+            for j in farms[s1]:
+                if shortpath[i][j]>farthest1:
+                    farthest1 = shortpath[i][j]
+            if farthest1>diameter:
+                continue
+            for j in farms[s2]:
+                if farthest1+dist[i][j]>diameter:
+                    continue
+                farthest2 = 0
+                for k in farms[s2]:
+                    if shortpath[j][k]>farthest2:
+                        farthest2 = shortpath[j][k]
+                if dist[i][j]+farthest1+farthest2<diameter:
+                    diameter = dist[i][j]+farthest1+farthest2
+
+diameter = max(diameter, d2)
+
+fout.write('{:.6f}\n'.format(diameter))
+
+fin.close()
+fout.close()

@@ -1,0 +1,26 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: combo
+"""
+
+fin = open ('combo.in', 'r')
+fout = open ('combo.out', 'w')
+
+n = int(fin.readline())
+j1,j2,j3 = map(int,fin.readline().split())
+m1,m2,m3 = map(int,fin.readline().split())
+
+c1 = min(abs(j1-m1),n-abs(j1-m1))
+c2 = min(abs(j2-m2),n-abs(j2-m2))
+c3 = min(abs(j3-m3),n-abs(j3-m3))
+
+
+count = 2*min(n,5)**3
+
+count -= min(max(0,5-c1),n)*min(max(0,5-c2),n)*min(max(0,5-c3),n)
+
+fout.write(str(count)+'\n')
+
+fin.close()
+fout.close()

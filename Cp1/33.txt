@@ -1,0 +1,63 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: namenum
+"""
+
+fin = open ('namenum.in', 'r')
+fout = open ('namenum.out', 'w')
+fdic = open ('dict.txt', 'r')
+n = fin.readline().rstrip()
+namedic = {}
+name = fdic.readline().rstrip()
+while name:
+    namedic[name] = 0
+    name = fdic.readline().rstrip()
+
+nummap = {
+  2:['A','B','C'],
+  3:['D','E','F'],
+  4:['G','H','I'],
+  5:['J','K','L'],
+  6:['M','N','O'],
+  7:['P','R','S'],
+  8:['T','U','V'],
+  9:['W','X','Y']
+}
+
+namefound = False
+i = 0
+j = 0
+nl = len(n)
+qj = []
+nameqj = []
+while i<nl and i>-1:
+    while j<3:
+        qj.append(j)
+        nameqj.append(nummap[int(n[i])][j])
+        if i==nl-1:
+            if ''.join(nameqj) in namedic:
+                fout.write(''.join(nameqj)+'\n')
+                namefound = True
+            qj.pop()
+            nameqj.pop()
+            j+=1
+            continue
+        else:
+            i+=1
+            j=0
+            break
+    if j==3:
+        i-=1
+        if i>=0:
+            j = qj.pop()
+            nameqj.pop()
+            j+=1
+        
+if not namefound:
+    fout.write('NONE'+'\n')
+
+
+fdic.close()
+fin.close()
+fout.close()

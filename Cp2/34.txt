@@ -1,0 +1,29 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: money
+"""
+
+fin = open ('money.in', 'r')
+fout = open ('money.out', 'w')
+
+v, n = map(int, fin.readline().split())
+line = fin.readline()
+coins = []
+while line:
+    coins.extend(list(map(int, line.split())))
+    line = fin.readline()
+
+coins = sorted(coins)
+
+res = [0] * (n+1)
+res[0] = 1
+
+for i in range(v):
+    for j in range(coins[i],n+1):
+        res[j] += res[j - coins[i]]          
+
+fout.write(str(res[n])+'\n')
+
+fin.close()
+fout.close()

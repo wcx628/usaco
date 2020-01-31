@@ -1,0 +1,66 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: zerosum
+"""
+
+fin = open ('zerosum.in', 'r')
+fout = open ('zerosum.out', 'w')
+
+n = int(fin.readline())
+
+def calc(a,b,op):
+    if op == '-':
+        return a-b
+    if op == '+':
+        return a+b
+    if op == ' ':
+        print('Error')
+        return 0
+
+res = []
+def solve(oplist):
+    if len(oplist) == n-1:
+        tot = 0
+        i = 1
+        prop = ''
+        cur1 = 1
+        cur2 = 0
+        for op in oplist:
+            if cur2 != 0 and op != ' ':
+                cur1 = calc(cur1,cur2,prop)
+                i += 1
+                cur2 = i
+                prop = op
+            elif cur2 != 0 and op == ' ':
+                i += 1
+                cur2 = cur2 * 10 + i
+            elif op == ' ' and cur2 == 0:
+                i += 1
+                cur1 = cur1 * 10 + i
+            elif cur2 == 0:
+                i += 1
+                cur2 = i
+            if op != ' ':
+                prop = op
+        tot = calc(cur1,cur2,prop)
+        if tot == 0:
+            res.append(oplist.copy())
+        return 0
+    opdic = [' ','+','-']
+    for op in opdic:
+        oplist.append(op)
+        solve(oplist)
+        oplist.pop()
+
+solve([])    
+for re in res:
+    s = '1'
+    i = 1
+    for op in re:
+        s += op+str(i+1)
+        i += 1
+    fout.write(s+'\n')
+
+fin.close()
+fout.close()

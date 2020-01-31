@@ -1,0 +1,73 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: butter
+"""
+fin = open ('butter.in', 'r')
+fout = open ('butter.out', 'w')
+
+import heapq
+n,p,c = map(int,fin.readline().split())
+cow_location = {}
+for i in range(n):
+    cow_loc = int(fin.readline())
+    if cow_loc in cow_location:
+        cow_location[cow_loc] += 1
+    else:
+        cow_location[cow_loc] = 1
+
+pmap = {}
+for i in range(c):
+    v1,v2,w = map(int,fin.readline().split())
+    if v1 in pmap:
+        pmap[v1].append((w,v2,v1))
+    else:
+        pmap[v1] = [(w,v2,v1)]
+    if v2 in pmap:
+        pmap[v2].append((w,v1,v2))
+    else:
+        pmap[v2] = [(w,v1,v2)]
+        
+def dstr(v,pmap):
+    #Initializing arrays
+    p = len(pmap)
+    dist = [2**31-1]*(p+1)   #Shortest Distance from starting vertice
+    prev = [-1]*(p+1)        #Prev vertice in the shortest path to the starting vertice
+    visited = [True]*(p+1)   #Whether the vertice is visited or not
+    
+    #Initialize the start vertice
+    min_h = [(0,v,-1)]
+    while any(visited[1:]):
+        mind, currv, pre = heapq.heappop(min_h)
+        if not visited[currv]:
+            continue
+        dist[currv] = mind
+        prev[currv] = pre
+        visited[currv] = False
+        for edge in pmap[currv]:
+            if visited[edge[1]]:
+                heapq.heappush(min_h,(edge[0]+mind,edge[1],edge[2]))
+        #print(dist)
+        #print(prev)
+        #print(visited)
+        #print(min_h)
+                
+    return dist
+
+cow_shortest = {}
+for cow_loc in cow_location:
+    cow_shortest[cow_loc] = dstr(cow_loc, pmap)
+
+shortest_walk = 2**31 - 1
+for v in range(1,p+1):
+    temp_walk = 0
+    for cow_loc in cow_location:
+        temp_walk += cow_location[cow_loc] * cow_shortest[cow_loc][v]
+        
+    if shortest_walk > temp_walk:
+        shortest_walk = temp_walk
+
+fout.write(str(shortest_walk)+'\n')
+
+fin.close()
+fout.close()

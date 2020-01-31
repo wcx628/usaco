@@ -1,0 +1,140 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: camelot
+"""
+fin = open ('camelot.in', 'r')
+fout = open ('camelot.out', 'w')
+
+m,n = map(int, fin.readline().split())
+line = fin.readline().rstrip()
+kingpos = (-1,-1)
+knightpos = []
+
+while line != "":
+    poslist = line.split()
+    i = 0
+    if kingpos == (-1,-1):
+        kingpos = (poslist[2*i], int(poslist[2*i+1]))
+        i += 1
+    for j in range(i, len(poslist) // 2):
+        knightpos.append((poslist[2*j], int(poslist[2*j+1])))
+        
+    line = fin.readline().rstrip()
+
+dking = ["N","S","W","E","NE","NW","SE","SW"]
+dknight = ['NE','NW','WN','WS','SW','SE','ES','EN']
+dmap = {
+    "king":{
+        "N":(-1,0),
+        "S":(1,0),
+        "W":(0,-1),
+        "E":(0,1),
+        "NE":(-1,1),
+        "NW":(-1,-1),
+        "SE":(1,1),
+        "SW":(1,-1),
+    },
+    "knight":{
+        "NE":(-2,1),
+        "NW":(-2,-1),
+        "WN":(-1,-2),
+        "WS":(1,-2),
+        "SW":(2,-1),
+        "SE":(2,1),
+        "ES":(1,2),
+        "EN":(-1,2),
+    },
+}
+
+def check_knight_move(pos, direction):
+    temppos = (chr(ord(pos[0]) + dmap['knight'][dknight[direction]][0]), pos[1]
+              + dmap['knight'][dknight[direction]][1])
+    if (temppos[0] <'A') or (temppos[0] >chr(ord('A')+n-1)) or (temppos[1]<1) or (temppos[1]>m):
+        return False
+    else:
+        return True
+    
+kboardmap = {}
+for i in range(n):
+    for j in range(m):
+        pos = (chr(ord('A')+i),j+1)
+        for d in range(8):
+            if check_knight_move(pos, d):
+                if pos in kboardmap:
+                    kboardmap[pos].append((chr(ord(pos[0]) + dmap['knight'][dknight[d]][0]), pos[1]
+                                                              + dmap['knight'][dknight[d]][1]))
+                else:
+                    kboardmap[pos] = [(chr(ord(pos[0]) + dmap['knight'][dknight[d]][0]), pos[1]
+                                                              + dmap['knight'][dknight[d]][1])]
+kingdist = {}
+for pos in kboardmap:
+    kingdist[pos] = max(abs(ord(kingpos[0])-ord(pos[0])),abs(kingpos[1]-pos[1]))
+
+def spfa(s):
+    d = {}
+    d1 = {}
+    for pos in kboardmap:
+        d[pos] = 10000
+        d1[pos] = 10000
+    
+    d[s] = 0
+    visited = set(s)
+    queue = [s]
+    i, j = -1, 0
+    while i<j:
+        i += 1
+        curr = queue[i]
+        for v in kboardmap[curr]:
+            if d[v]>d[curr]+1:
+                d[v] = d[curr]+1
+                if v not in visited:
+                    queue.append(v)
+                    visited.add(v)
+                    j += 1
+            if d1[v]>min(d[v]+kingdist[v], d1[curr]+1):
+                d1[v] = min(d[v]+kingdist[v], d1[curr]+1)
+
+    return d, d1
+
+mapfast = {}
+pickking = {}
+for pos in kboardmap:
+    if pos in knightpos:
+        mapfast[pos], pickking[pos] = spfa(pos)
+    else:
+        mapfast[pos], _ = spfa(pos)
+    
+for kpos in pickking:
+    for pos in kboardmap:
+        pickking[kpos][pos] = pickking[kpos][pos] - mapfast[kpos][pos]
+        
+mpkc = {}
+for pos in kboardmap:
+    mpkc[pos] = min([pickking[x][pos] for x in pickking])
+
+shortest = 10000
+if kingpos in knightpos:
+    for gpos in kboardmap:
+        temp = 0
+        for kpos in knightpos:
+            temp += mapfast[kpos][gpos]
+        if temp<shortest:
+            shortest = temp
+else:
+    for gpos in kboardmap:
+        temp = mpkc[gpos]
+        for kpos in knightpos:
+            temp += mapfast[kpos][gpos]
+            if temp>=shortest:
+                break
+        if temp<shortest:
+            shortest = temp
+        
+
+if len(knightpos) == 0:
+    shortest = 0
+fout.write(str(shortest)+'\n')
+                        
+fin.close()
+fout.close()

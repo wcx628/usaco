@@ -1,0 +1,63 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: fence
+"""
+fin = open ('fence.in', 'r')
+fout = open ('fence.out', 'w')
+
+f = int(fin.readline())
+fence = []
+for i in range(f):
+    cf = tuple(map(int, fin.readline().split()))
+    if cf[0]>cf[1]:
+        fence.append((cf[1],cf[0]))
+    else:
+        fence.append(cf)
+
+fence = sorted(fence)
+print(fence)
+stack = []
+res = []
+fc = {}
+for f1,f2 in fence:
+    if f1 in fc:
+        fc[f1] += 1
+    else:
+        fc[f1] = 1
+    if f2 in fc:
+        fc[f2] += 1
+    else:
+        fc[f2] = 1
+
+s = 500
+for f1 in fc:
+    if fc[f1] % 2 == 1 and s>f1:
+        s = f1
+
+if s == 500:
+    s = 1
+
+stack.append(s)
+while stack:
+    rf = False
+    for f1,f2 in fence:
+        if f1 == stack[-1]:
+            stack.append(f2)
+            rf = True
+            fence.remove((f1,f2))
+            break
+        elif f2 == stack[-1]:
+            stack.append(f1)
+            rf = True
+            fence.remove((f1,f2))
+            break
+    if not rf:
+        res.append(stack.pop())
+        
+for n in res[::-1]:
+    fout.write(str(n)+'\n')
+
+
+fin.close()
+fout.close()

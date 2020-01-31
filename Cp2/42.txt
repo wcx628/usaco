@@ -1,0 +1,53 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: maze1
+"""
+
+fin = open ('maze1.in', 'r')
+fout = open ('maze1.out', 'w')
+
+w,h = map(int, fin.readline().split())
+maze = []
+exit = []
+for i in range(2*h+1):
+    line = fin.readline()
+    maze.append(line)
+    if i == 0 and ' ' in line:
+        for y,c in enumerate(line):
+            if c == ' ':
+                exit.append((i, y // 2))
+    elif i == 2*h and ' ' in line:
+        for y,c in enumerate(line):
+            if c == ' ':
+                exit.append((i // 2 - 1, y // 2))
+    elif line[0] == ' ':
+        exit.append((i // 2, 0))
+    elif line[2*w] == ' ':
+        exit.append((i // 2, w - 1))
+
+dt = [(-1,0),(0,1),(1,0),(0,-1)]
+step = 1
+curr = exit
+vis = set(curr)
+print(curr)
+nex = []
+while curr:
+    for v in curr:
+        for d in dt:
+            if (v[0]+d[0]>=0 and v[0]+d[0]<h and
+                v[1]+d[1]>=0 and v[1]+d[1]<w and
+                maze[v[0]*2+1+d[0]][v[1]*2+1+d[1]] != '|' and
+                maze[v[0]*2+1+d[0]][v[1]*2+1+d[1]] != '-' and
+                (v[0]+d[0],v[1]+d[1]) not in vis):
+                nex.append((v[0]+d[0],v[1]+d[1]))
+                vis.add((v[0]+d[0],v[1]+d[1]))
+    step += 1
+    curr = nex
+    nex = []
+    
+fout.write(str(step - 1)+'\n')
+
+
+fin.close()
+fout.close()

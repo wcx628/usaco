@@ -1,0 +1,53 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: concom
+"""
+
+fin = open ('concom.in', 'r')
+fout = open ('concom.out', 'w')
+
+n = int(fin.readline())
+conmap = {}
+conname = set()
+for _ in range(n):
+    a,b,p = map(int, fin.readline().split())
+    if a not in conmap:
+        conmap[a] = {}
+        conmap[a][b] = p
+    else:
+        conmap[a][b] = p
+    conname.add(a)
+    conname.add(b)
+
+concontrol = {}
+for i in conmap:
+    concontrol[i] = set()
+    concontrol[i].add(i)
+
+for i in conmap:
+    f = True
+    while f:
+        f = False
+        for k in conname:
+            if k not in concontrol[i]:
+                conk = 0
+                for j in concontrol[i]:
+                    if j in conmap and k in conmap[j]:
+                        conk += conmap[j][k]
+                if conk>50:
+                    if k in concontrol:
+                        concontrol[i] = concontrol[i].union(concontrol[k])
+                    else:
+                        concontrol[i].add(k)
+                    f = True
+                    break
+                
+                
+for i in sorted(list(concontrol.keys())):
+    for j in sorted(list(concontrol[i])):
+        if i!=j:
+            fout.write(str(i)+' '+str(j)+'\n')
+
+fin.close()
+fout.close()

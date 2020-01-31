@@ -1,0 +1,64 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: wormhole
+"""
+
+fin = open ('wormhole.in', 'r')
+fout = open ('wormhole.out', 'w')
+
+n = int(fin.readline())
+holes = []
+for _ in range(n):
+    holes.append(tuple(map(int,fin.readline().split())))
+
+holemap = {}
+nexthole = [-1]*n
+for ind,hole in enumerate(holes):
+    if hole[1] not in holemap:
+        holemap[hole[1]] = [(hole[0],ind)]
+    else:
+        holemap[hole[1]].append((hole[0],ind))
+
+for y in holemap:
+    holemap[y] = sorted(holemap[y])
+    for i in range(len(holemap[y])-1):
+        nexthole[holemap[y][i][1]] = holemap[y][i+1][1]
+
+matchl = [-1]*n
+
+def holecheck():
+    for ind,hole in enumerate(holes):
+        vis = set()
+        j = matchl[ind]
+        vis.add(j)
+        while nexthole[j]!=-1:
+            j = nexthole[j]
+            j = matchl[j]
+            if j in vis:
+                return True
+            vis.add(j)
+    return False
+
+count = 0
+def solve():
+    global count
+    for i in range(n):
+        if matchl[i]==-1:
+            break
+    if matchl[i]!=-1:
+        if holecheck():
+            count+=1
+    for j in range(i+1,n):
+        if matchl[j]==-1:
+            matchl[i] = j
+            matchl[j] = i
+            solve()
+            matchl[i] = -1
+            matchl[j] = -1
+
+solve()
+fout.write(str(count)+'\n')
+
+fin.close()
+fout.close()

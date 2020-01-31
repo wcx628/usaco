@@ -1,0 +1,55 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: msquare
+"""
+fin = open ('msquare.in', 'r')
+fout = open ('msquare.out', 'w')
+
+def opA(s):
+    return s[::-1]
+
+def opB(s):
+    return s[3]+s[:3]+s[5:]+s[4]
+
+def opC(s):
+    return s[0]+s[6]+s[1]+s[3]+s[4]+s[2]+s[5]+s[7]
+
+possible_states = set()
+target = ''.join(fin.readline().split())
+oplist = [opA,opB,opC]
+opl = ['A','B','C']
+
+init_state = '12345678'
+step = 0
+possible_states.add(init_state)
+states_tree_last = [init_state]
+solution_last = ['']
+if init_state == target:
+    fout.write('0\n')
+    fout.write(solution_last[-1]+'\n')
+
+q = False
+while states_tree_last and not q:
+    solution_curr = []
+    states_tree_curr = []
+    step += 1
+    for statei in range(len(states_tree_last)):
+        for opi in range(3):
+            transformed = oplist[opi](states_tree_last[statei])
+            if transformed not in possible_states:
+                possible_states.add(transformed)
+                states_tree_curr.append(transformed)
+                solution_curr.append(solution_last[statei]+opl[opi])
+                if transformed == target:
+                    fout.write(str(step)+'\n')
+                    fout.write(solution_curr[-1]+'\n')
+                    q = True
+                    break
+        if q:
+            break
+    states_tree_last = states_tree_curr.copy()
+    solution_last = solution_curr.copy()
+
+fin.close()
+fout.close()

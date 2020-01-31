@@ -1,0 +1,44 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: stamps
+"""
+fin = open ('stamps.in', 'r')
+fout = open ('stamps.out', 'w')
+
+k,n = map(int,fin.readline().split())
+slist = []
+line = fin.readline()
+while line:
+    slist.extend(list(map(int,line.split())))
+    line = fin.readline()
+    
+slist = sorted(slist)
+minst = [0]*(k*slist[-1]+1)
+longstr = 0
+curr = 0
+f = False
+for i in range(1,k*slist[-1]+1):
+    tmin = k
+    for j in slist:
+        if j>i:
+            break
+        if tmin>minst[i-j] and minst[i-j] != -1:
+            tmin = minst[i-j]
+    if tmin<k:
+        minst[i] = tmin + 1
+        if f:
+            curr += 1
+            longstr = max(longstr, curr)
+        else:
+            f = True
+            curr = 1
+    else:
+        f = False
+        minst[i] = -1
+        curr = 0
+        
+fout.write(str(longstr)+'\n')
+
+fin.close()
+fout.close()

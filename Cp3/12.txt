@@ -1,0 +1,21 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: inflate
+"""
+
+fin = open ('inflate.in', 'r')
+fout = open ('inflate.out', 'w')
+
+m,n = map(int,fin.readline().split())
+
+dp = [0]*(m+1)
+for i in range(n):
+    s,t = map(int,fin.readline().split())
+    for j in range(t,m+1):
+        dp[j] = max(dp[j],dp[j-t]+s)
+    
+fout.write(str(dp[m])+'\n')
+
+fin.close()
+fout.close()

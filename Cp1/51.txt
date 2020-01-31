@@ -1,0 +1,42 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: ariprog
+"""
+
+fin = open ('ariprog.in', 'r')
+fout = open ('ariprog.out', 'w')
+
+n = int(fin.readline())
+m = int(fin.readline())
+
+bisquare = [0]*125001
+for i in range(m+1):
+    for j in range(m+1):
+        bisquare[i**2+j**2] = 1
+
+bislist = [x for x in range(125001) if bisquare[x]]
+count = 0
+upperbound = m**2+m**2
+for j in range(1,upperbound // (n-1)+1):
+    if j>3000:
+        break
+    for ind,i in enumerate(bislist):
+        if ind>5000:
+            break
+        if i+(n-1)*j>upperbound:
+            break
+        valid = True
+        for k in range(n):
+            if bisquare[i+j*k]==0:
+                valid = False
+                break
+        if valid:
+            fout.write(str(i)+' '+str(j)+'\n')
+            count+=1
+
+if count==0:
+    fout.write('NONE\n')
+
+fin.close()
+fout.close()

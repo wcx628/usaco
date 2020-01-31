@@ -1,0 +1,70 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: shopping
+"""
+fin = open ('shopping.in', 'r')
+fout = open ('shopping.out', 'w')
+
+class Offer:
+    def __init__(self,l):
+        self.n = l[0]
+        self.itemn = {}
+        for i in range(self.n):
+            self.itemn[l[i*2+1]] = l[i*2+2]
+        self.p = l[-1]
+    def show(self):
+        print(self.n,self.itemn,self.p)
+
+s = int(fin.readline())
+coupon = []
+for i in range(s):
+    line = list(map(int, fin.readline().split()))
+    coupon.append(Offer(line))
+    
+tot_purchase = {}
+price = {}
+b = int(fin.readline())
+for i in range(b):
+    c,k,p = map(int,fin.readline().split())
+    tot_purchase[c] = k
+    price[c] = p
+    
+stored_min = {}
+stored_min[tuple([0]*b)] = 0
+def bestprice(l):
+    if tuple(l.values()) in stored_min:
+        return stored_min[tuple(l.values())]
+    minprice = 2**31
+    any_offer_eligible = False
+    for offer in coupon:
+        eligible = True
+        for item in l:
+            if not (item not in offer.itemn or l[item]>=offer.itemn[item]):
+                eligible = False
+                break
+        if eligible:
+            any_offer_eligible = True
+            for item in l:
+                if item in offer.itemn:
+                    l[item] -= offer.itemn[item]
+            currprice = offer.p + bestprice(l)
+            if minprice>currprice:
+                minprice = currprice
+            for item in l:
+                if item in offer.itemn:
+                    l[item] += offer.itemn[item]
+    rawprice = 0
+    if not any_offer_eligible:
+        for item in l:
+            rawprice += l[item] * price[item]
+        if minprice>rawprice:
+            minprice = rawprice
+            
+    stored_min[tuple(l.values())] = minprice
+    return minprice
+            
+fout.write(str(bestprice(tot_purchase))+'\n')
+
+fin.close()
+fout.close()

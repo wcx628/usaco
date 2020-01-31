@@ -1,0 +1,43 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: crypt1
+"""
+
+fin = open ('crypt1.in', 'r')
+fout = open ('crypt1.out', 'w')
+
+n = int(fin.readline())
+num = list(map(int,fin.readline().split()))
+nset = set()
+for i in num:
+    nset.add(str(i))
+
+def islegit(n,num):
+    s = str(n)
+    for c in s:
+        if c not in num:
+            return False
+    return True
+
+count = 0
+for i in range(n):
+    if num[i]==0:
+        continue
+    for j in range(n):
+        for k in range(n):
+            nom1 = num[i]*100+num[j]*10+num[k]
+            for l in range(n):
+                if num[l]==0 or num[l]*nom1>999 or not islegit(num[l]*nom1, nset):
+                    continue
+                for m in range(n):
+                    if num[m]*nom1>999 or not islegit(num[m]*nom1, nset):
+                        continue
+                    nom2 = num[l]*10+num[m]
+                    if islegit(nom1*nom2, nset):
+                        count+=1
+
+fout.write(str(count)+'\n')
+
+fin.close()
+fout.close()

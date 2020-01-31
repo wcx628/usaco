@@ -1,0 +1,59 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: comehome
+"""
+
+fin = open ('comehome.in', 'r')
+fout = open ('comehome.out', 'w')
+
+def calindex(c):
+    if c.isupper():
+        return ord(c)-ord('A')
+    elif c.islower():
+        return ord(c)-ord('a')+26
+
+p = int(fin.readline())
+pmap = [[2**31-1] * 52 for _ in range(52)]
+pmappre = [[[2**31-1] for x in range(52)] for _ in range(52)]
+for i in range(p):
+    line = fin.readline().split()
+    pmappre[calindex(line[0])][calindex(line[1])].append(int(line[2]))
+    pmappre[calindex(line[1])][calindex(line[0])].append(int(line[2]))
+
+for i in range(52):
+    for j in range(52):
+        pmap[i][j] = min(pmappre[i][j])
+    
+visitc = 0
+visited = [False] * 52
+distance = [2**31-1] * 52
+parent = [-1] * 52
+distance[25] = 0
+while visitc<52:
+    mindist = 2**31-1
+    verti = -1
+    for i in range(52):
+        if distance[i]<mindist and not visited[i]:
+            mindist = distance[i]
+            verti = i
+    if verti == -1:
+        break
+    visited[verti] = True
+    visitc += 1
+    for i in range(52):
+        if pmap[i][verti] < 2**31-1 and distance[i] > distance[verti] + pmap[verti][i]:
+            distance[i] = distance[verti] + pmap[verti][i]
+            parent[i] = verti
+
+mindist = 2**31 - 1
+cow = -1
+for i in range(25):
+    if distance[i]<mindist:
+        mindist = distance[i]
+        cow = i
+        
+fout.write(chr(65+cow)+' '+str(mindist)+'\n')
+
+fin.close()
+fout.close()

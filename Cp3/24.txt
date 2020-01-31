@@ -1,0 +1,64 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: ratios
+"""
+fin = open ('ratios.in', 'r')
+fout = open ('ratios.out', 'w')
+
+pm = list(map(int,fin.readline().split()))
+gi = []
+for _ in range(3):
+    gi.append(list(map(int,fin.readline().split())))
+
+"""
+gim = np.matrix(gi).T
+pmm = np.matrix(pm).T
+
+res = np.linalg.det(gim) * gim.I * pmm
+if res == 0:
+if any(res<0) and any(res>0):
+    fout.write('NONE\n')
+"""
+q = True
+for i in range(101):
+    for j in range(101):
+        for k in range(101):
+            comp = set([0,1,2])
+            f = False
+            fn = gi[0][0]*i+gi[1][0]*j+gi[2][0]*k, gi[0][1]*i+gi[1][1]*j+gi[2][1]*k, gi[0][2]*i+gi[1][2]*j+gi[2][2]*k
+            for l in range(3):
+                if pm[l]==0 and fn[l]==0:
+                    comp.remove(l)
+                elif pm[l]==0 and fn[l]!=0:
+                    f = True
+                    break
+            if f:
+                continue
+            f = False
+            tmp = 0
+            if not comp:
+                continue
+            for l in comp:
+                if fn[l] % pm[l]!=0:
+                    f = True
+                    break
+                elif tmp == 0:
+                    tmp = fn[l] // pm[l]
+                elif tmp != fn[l] // pm[l]:
+                    f = True
+                    break
+            if not f and tmp!=0:
+                fout.write(str(i)+' '+str(j)+' '+str(k)+' '+str(fn[0]//pm[0])+'\n')
+                q = False
+                break
+        if not q:
+            break
+    if not q:
+        break
+                
+if q:
+    fout.write('NONE\n')
+
+fin.close()
+fout.close()

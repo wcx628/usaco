@@ -1,0 +1,36 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: humble
+"""
+
+fin = open ('humble.in', 'r')
+fout = open ('humble.out', 'w')
+
+k,n = map(int,fin.readline().split())
+plist = list(map(int,fin.readline().split()))
+hnum = []
+pcurr = [0]*k
+plist = sorted(plist)
+
+hnum.append(1)
+c = 0
+pcurr[0] = 0
+while c<n:
+    currmin = 2**45
+    currn = -1
+    for i in range(k):
+        if plist[i]*hnum[pcurr[i]] == hnum[-1]:
+            pcurr[i] += 1
+        j = pcurr[i]
+        if currmin>hnum[j]*plist[i]:
+            currmin = hnum[j]*plist[i]
+            currn = i
+    pcurr[currn] += 1
+    hnum.append(currmin)
+    c += 1  
+
+fout.write(str(hnum[-1])+'\n')
+
+fin.close()
+fout.close()

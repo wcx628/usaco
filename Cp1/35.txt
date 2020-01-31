@@ -1,0 +1,37 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: dualpal
+"""
+
+fin = open ('dualpal.in', 'r')
+fout = open ('dualpal.out', 'w')
+
+n,s = map(int,fin.readline().split())
+def ispal(n):
+    s = str(n)
+    return s == s[::-1]
+
+def conv(n,b):
+    sl = []
+    while n>0:
+        n,r = divmod(n,b)
+        sl.append(str(r))
+
+    return ''.join(sl)[::-1]
+
+while n>0:
+    s+=1
+    c = 0
+    for b in range(2,11):
+        if ispal(conv(s,b)):
+            c+=1
+        if c>1:
+            break
+    if c>1:
+        fout.write(str(s)+'\n')
+        n-=1
+    
+
+fin.close()
+fout.close()

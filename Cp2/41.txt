@@ -1,0 +1,46 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: ttwo
+"""
+
+fin = open ('ttwo.in', 'r')
+fout = open ('ttwo.out', 'w')
+
+def isval(c,fmap):
+    if c[0]<0 or c[0]>9 or c[1]<0 or c[1]>9:
+        return False
+    if fmap[c[0]][c[1]] == '*':
+        return False
+    return True
+
+dt = [(-1,0),(0,1),(1,0),(0,-1)]
+
+fmap = []
+for x in range(10):
+    fmap.append(fin.readline().rstrip())
+    if 'C' in fmap[x]:
+        ccod = (x,fmap[x].index('C'),0)
+    if 'F' in fmap[x]:
+        fcod = (x,fmap[x].index('F'),0)
+        
+t = 0
+while t<10000:
+    t += 1
+    if isval((ccod[0]+dt[ccod[2]][0],ccod[1]+dt[ccod[2]][1]),fmap):
+        ccod = (ccod[0]+dt[ccod[2]][0], ccod[1]+dt[ccod[2]][1], ccod[2])
+    else:
+        ccod = (ccod[0], ccod[1], (ccod[2] + 1) % 4)
+    if isval((fcod[0]+dt[fcod[2]][0],fcod[1]+dt[fcod[2]][1]),fmap):
+        fcod = (fcod[0]+dt[fcod[2]][0], fcod[1]+dt[fcod[2]][1], fcod[2])
+    else:
+        fcod = (fcod[0], fcod[1], (fcod[2] + 1) % 4)
+    if ccod[0] == fcod[0] and ccod[1] == fcod[1]:
+        break
+if t<10000:
+    fout.write(str(t)+'\n')
+else:
+    fout.write('0\n')
+
+fin.close()
+fout.close()

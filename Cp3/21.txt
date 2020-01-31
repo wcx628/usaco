@@ -1,0 +1,44 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: fact4
+"""
+fin = open ('fact4.in', 'r')
+fout = open ('fact4.out', 'w')
+
+n = int(fin.readline())
+f5 = 5
+n5 = 0
+while n>f5:
+    n5 += n // f5
+    f5 *= 5
+
+ld = 1
+for i in range(1,n+1):
+    if i % 5!=0 and n5>0 and i % 2==0:
+        ld = ld * (i // 2) % 100
+        n5 -= 1
+    elif i % 10 == 0:
+        j = i
+        while j % 10==0:
+            j = j // 10
+            n5 -= 1
+        while j % 5==0:
+            j = j // 5
+        ld = ld * j % 100
+    elif i % 5!=0:
+        ld = ld * i % 100
+    else:
+        j = i
+        while j % 5==0:
+            j = j // 5
+        ld = ld * j % 100
+
+while n5<0:
+    ld = ld*2 % 100
+    n5 += 1
+            
+fout.write(str(ld % 10)+'\n')
+
+fin.close()
+fout.close()

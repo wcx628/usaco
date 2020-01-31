@@ -1,0 +1,69 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: transform
+"""
+
+fin = open ('transform.in', 'r')
+fout = open ('transform.out', 'w')
+n = int(fin.readline().rstrip())
+pattern1 = []
+pattern2 = []
+for _ in range(n):
+    line = fin.readline().rstrip()
+    pattern1.append(line)
+
+for _ in range(n):
+    line = fin.readline().rstrip()
+    pattern2.append(line)
+
+#Match
+def identical(pat1,pat2):
+    for line1, line2 in zip(pat1,pat2):
+        if line1!=line2:
+            return False
+    return True
+
+def rotate90(pat1):
+    n = len(pat1)
+    stg = [[' ']*n for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            stg[j][n-1-i] = pat1[i][j]
+    res = []
+    for i in range(n):
+        res.append(''.join(stg[i]))
+    return res
+
+def mirror(pat1):
+    res = []
+    for line in pat1:
+        res.append(line[::-1])
+    return res
+
+rot90 = rotate90(pattern1)
+rot180 = rotate90(rot90)
+rot270 = rotate90(rot180)
+mir = mirror(pattern1)
+mirrot90 = rotate90(mir)
+mirrot180 = rotate90(mirrot90)
+mirrot270 = rotate90(mirrot180)
+
+if identical(rot90,pattern2):
+    fout.write('1'+'\n')
+elif identical(rot180,pattern2):
+    fout.write('2'+'\n')
+elif identical(rot270,pattern2):
+    fout.write('3'+'\n')
+elif identical(mir,pattern2):
+    fout.write('4'+'\n')
+elif identical(mirrot90,pattern2) or identical(mirrot180,pattern2) or identical(mirrot270,pattern2):
+    fout.write('5'+'\n')
+elif identical(pattern1,pattern2):
+    fout.write('6'+'\n')
+else:
+    fout.write('7'+'\n')
+     
+
+fin.close()
+fout.close()

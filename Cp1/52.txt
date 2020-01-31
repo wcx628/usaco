@@ -1,0 +1,58 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: milk3
+"""
+
+fin = open ('milk3.in', 'r')
+fout = open ('milk3.out', 'w')
+
+def pack(posc,q,s):
+    d1,e1,f1,i = s
+    if (d1,e1,f1) not in state:
+        state.add((d1,e1,f1))
+        if d1==0:
+            posc.add(f1)
+            q.append((d1,e1,f1,i+1))
+        else:
+            q.append((d1,e1,f1,i+1))
+        print((d1,e1,f1,i+1))
+
+a,b,c = map(int,fin.readline().split())
+state = set()
+d,e,f = 0,0,c
+state.add((d,e,f))
+i=0
+j=0
+posc = set()
+posc.add(c)
+q=[]
+q.append((d,e,f,0))
+while i<=13:
+    if j==len(q):
+        break
+    d,e,f,i = q[j]
+    d1,e1,f1 = 0,e,d+f
+    pack(posc,q,(d1,e1,f1,i))
+    d1,e1,f1 = d+e-min(d+e,b),min(d+e,b),f
+    pack(posc,q,(d1,e1,f1,i))
+    d1,e1,f1 = min(d+e,a),d+e-min(d+e,a),f
+    pack(posc,q,(d1,e1,f1,i))
+    d1,e1,f1 = d,0,e+f
+    pack(posc,q,(d1,e1,f1,i))
+    d1,e1,f1 = min(d+f,a),e,d+f-min(d+f,a)
+    pack(posc,q,(d1,e1,f1,i))
+    d1,e1,f1 = d,min(e+f,b),e+f-min(e+f,b)
+    pack(posc,q,(d1,e1,f1,i))
+    j+=1
+
+posc = sorted(list(posc))
+
+out = ''
+for x in posc:
+    out+=str(x)+' '
+
+fout.write(out[:-1]+'\n')
+
+fin.close()
+fout.close()

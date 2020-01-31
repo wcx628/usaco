@@ -1,0 +1,33 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: friday
+"""
+
+fin = open ('friday.in', 'r')
+fout = open ('friday.out', 'w')
+n = int(fin.readline().rstrip())
+mon31 = set([1,3,5,7,8,10,0])
+count = {}
+days = ['M','T','W','Th','F','S','Su']
+for day in days:
+    count[day] = 0
+year = 1900
+dayc = 1
+for yp in range(n):
+    for m in range(12):
+        if yp==0 and m==0:
+            dayc+=12
+        elif m in mon31:
+            dayc+=31
+        elif m==2:
+            if (year+yp) % 400==0 or (year+yp) % 4==0 and (year+yp) % 100!=0:
+                dayc+=29
+            else:
+                dayc+=28
+        else:
+            dayc+=30
+        count[days[dayc % 7-1]]+=1
+fout.write(' '.join([str(count[days[5]]),str(count[days[6]]),str(count[days[0]]),str(count[days[1]]),str(count[days[2]]),str(count[days[3]]),str(count[days[4]])]) + '\n')
+fin.close()
+fout.close()

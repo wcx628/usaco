@@ -1,0 +1,28 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: milk
+"""
+
+fin = open ('milk.in', 'r')
+fout = open ('milk.out', 'w')
+
+tot, n = map(int, fin.readline().split())
+farmer = []
+for _ in range(n):
+    farmer.append(tuple(map(int,fin.readline().split())))
+
+sfarmer = sorted(farmer)
+totprice = 0
+for farm in sfarmer:
+    if farm[1] >= tot:
+        totprice += tot*farm[0]
+        break
+    else:
+        totprice += farm[0]*farm[1]
+        tot -= farm[1]
+
+fout.write(str(totprice)+'\n')
+
+fin.close()
+fout.close()

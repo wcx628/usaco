@@ -1,0 +1,53 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: preface
+"""
+
+fin = open ('preface.in', 'r')
+fout = open ('preface.out', 'w')
+
+n = int(fin.readline())
+def Roman(n):
+    ab = {
+        1:'I',
+        5:'V',
+        10:'X',
+        50:'L',
+        100:'C',
+        500:'D',
+        1000:'M'
+    }
+    if n>3500:
+        return 'N too big'
+    s = str(n)
+    l = len(s)
+    rs = ''
+    for c in s:
+        if int(c)<4:
+            rs+=ab[10**(l-1)]*int(c)
+        elif int(c)==4:
+            rs+=ab[10**(l-1)]+ab[5*10**(l-1)]
+        elif int(c)>=5 and int(c)<9:
+            rs+=ab[5*10**(l-1)]+ab[10**(l-1)]*(int(c)-5)
+        elif int(c)==9:
+            rs+=ab[10**(l-1)]+ab[10**l]
+        l-=1
+        
+    return rs
+
+count = {}
+rl = ['I','V','X','L','C','D','M']
+for i in range(1,n+1):
+    for c in Roman(i):
+        if c not in count:
+            count[c]=1
+        else:
+            count[c]+=1
+
+for c in rl:
+    if c in count:
+    	fout.write(c+' '+str(count[c])+'\n')
+
+fin.close()
+fout.close()

@@ -1,0 +1,121 @@
+{
+ID: george.34
+LANG: PASCAL
+PROG: prefix
+}
+const MAXL=20;
+
+type pnode=^node;
+     node=record
+            next:array['A'..'Z'] of pnode;
+            isthere:boolean;
+          end;
+
+var trie:pnode;
+    p:pointer;
+    fin,fout:text;
+
+function readword:string;
+var s:string;
+    ch:char;
+begin
+  read(fin,ch);
+  while (not (ch in ['A'..'Z','.'])) do
+    read(fin,ch);
+  s:='';
+  while (ch in ['A'..'Z','.']) do
+  begin
+    s:=s+ch;
+    read(fin,ch);
+  end;
+  readword:=s;
+end;
+
+procedure readdict;
+var n,i,j,l:integer;
+    nod:pnode;
+    ch,ch2:char;
+    s:string;
+begin
+  new(trie);
+  for ch2:='A' to 'Z' do
+    trie^.next[ch2]:=nil;
+  trie^.isthere:=false;
+  s:=readword;
+  while s<>'.' do
+  begin
+    nod:=trie;
+    l:=length(s);
+    for j:=l downto 1 do
+    begin
+      ch:=s[j];
+      if nod^.next[ch]=nil then
+      begin
+        new(nod^.next[ch]);
+        for ch2:='A' to 'Z' do
+          nod^.next[ch]^.next[ch2]:=nil;
+        nod^.next[ch]^.isthere:=false;
+		end;
+      nod:=nod^.next[ch];
+    end;
+    nod^.isthere:=true;
+    s:=readword;
+  end;
+end;
+
+procedure compute;
+var start:array[0..MAXL] of boolean; 
+    data:array[0..MAXL] of char; 
+    i,k:integer;
+    ch:char;
+    nod:pnode;
+    max,cnt:longint;
+begin
+  start[0]:=true;
+  read(fin,ch);
+  data[0]:=#0; 
+  i:=1;
+  max:=0; cnt:=1;
+  while not eof(fin) do
+  begin
+    if not (ch in ['A'..'Z']) then
+	 begin
+      read(fin,ch);
+      continue;
+	 end;
+    if i=MAXL then i:=0;  
+    k:=i;
+    data[i]:=ch;
+    start[i]:=false;
+    nod:=trie;
+    while nod<>nil do
+    begin
+      nod:=nod^.next[data[k]];
+      dec(k); if k<0 then k:=MAXL-1;
+      if start[k] and (nod<>nil) and nod^.isthere then
+      begin
+	start[i]:=true;
+        max:=cnt; break;
+      end;
+      if data[k]=#0 then break;
+    end;
+    read(fin,ch);
+
+    if cnt>max+MAXL then break;
+
+    inc(i); inc(cnt);
+  end;
+
+  assign(fout,'prefix.out');
+  rewrite(fout);
+  writeln(fout,max);
+  close(fout);
+end;
+
+begin
+  assign(fin,'prefix.in');
+  reset(fin);
+  readdict;
+  compute;
+  close(fin);
+end.

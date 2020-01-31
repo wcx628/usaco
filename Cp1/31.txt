@@ -1,0 +1,36 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: milk2
+"""
+
+fin = open ('milk2.in', 'r')
+fout = open ('milk2.out', 'w')
+n = int(fin.readline().rstrip())
+milk = []
+for _ in range(n):
+    line = tuple(map(int, fin.readline().split()))
+    milk.append(line)
+
+milk = sorted(milk)
+maxm = 0
+maxg = 0
+cur = (0,0)
+milkstart=False
+for m in milk:
+    if milkstart:
+        if m[0]<=cur[1]:
+            cur = cur[0],max(cur[1],m[1])
+        else:
+            maxm = max(maxm,cur[1]-cur[0])
+            maxg = max(maxg,m[0]-cur[1])
+            cur = m
+    else:
+        cur = m
+        milkstart = True
+
+maxm = max(maxm,cur[1]-cur[0])
+fout.write(str(maxm)+' '+str(maxg)+'\n')
+
+fin.close()
+fout.close()

@@ -1,0 +1,31 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: gift1
+"""
+
+fin = open ('gift1.in', 'r')
+fout = open ('gift1.out', 'w')
+n = int(fin.readline().rstrip())
+book = {}
+name = []
+for _ in range(n):
+    newn = fin.readline().rstrip()
+    book[newn] = 0
+    name.append(newn)
+while True:
+    giver = fin.readline().rstrip()
+    if not giver:
+        break
+    m,p = map(int, fin.readline().split())
+    if p!=0:
+        s,r = divmod(m,p)
+    else:
+        s,r = 0,0
+    book[giver]+=r-m
+    for _ in range(p):
+        receiver = fin.readline().rstrip()
+        book[receiver]+=s
+for nn in name:
+    fout.write(nn+' '+str(book[nn])+'\n')
+fout.close()

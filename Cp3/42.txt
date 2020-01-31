@@ -1,0 +1,56 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: fence9
+"""
+fin = open ('fence9.in', 'r')
+fout = open ('fence9.out', 'w')
+
+import math
+
+def crossproduct(a,b):
+    x1,y1,z1 = a
+    x2,y2,z2 = b
+    x = (y1*z2 - y2*z1)
+    y = (z1*x2 - z2*x1)
+    z = (x1*y2 - x2*y1)
+    return (x,y,z)
+
+def minus(a,b):
+    return tuple(x-y for x,y in zip(a,b))
+
+def add(a,b):
+    return tuple(x+y for x,y in zip(a,b))
+
+def sameside(a,b):
+    return (a>0 and b>0) or (a<0 and b<0)
+
+n,m,p = map(int,fin.readline().split())
+
+A = 0,0,0
+B = n,m,0
+C = p,0,0
+
+s = 0
+for i in range(1,n):
+    mx = max(math.ceil(i*m*1. / n) - 1,0)
+    #print(i,m,n,mx)
+    s += mx
+    
+if p > n and n>0:
+    for i in range(n,p):
+        mx = max(math.ceil((p-i)*m*1. / (p-n)) - 1,0)
+        s += mx
+elif p > n:
+    for i in range(n+1,p):
+        mx = max(math.ceil((p-i)*m*1. / (p-n)) - 1,0)
+        s += mx    
+elif p < n:
+    for i in range(p,n):
+        mx = max(math.floor((i-p)*m*1. / (n-p)),0)
+        s -= mx
+        
+fout.write(str(s)+'\n')
+
+fin.close()
+fout.close()

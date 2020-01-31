@@ -1,0 +1,92 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: castle
+"""
+
+fin = open ('castle.in', 'r')
+fout = open ('castle.out', 'w')
+
+def findnr(rmap):
+    n = len(rmap)
+    m = len(rmap[0])
+    for i in range(n):
+        for j in range(m):
+            if rmap[i][j]==0:
+                return i,j
+    return -1,-1
+
+m,n = map(int,fin.readline().split())
+
+cfp = []
+for i in range(n):
+    line = fin.readline().split()
+    cfp.append(list(map(int,line)))
+
+oper = [(0,-1),(-1,0),(0,1),(1,0)]
+direction = ['W','N','E','S']
+rmap = [[0]*m for _ in range(n)]
+rm = 1
+rmsz = [(0,0)]
+rmszd = {}
+while findnr(rmap)!=(-1,-1):
+    q = []
+    i = -1
+    j = 0
+    q.append(findnr(rmap))
+    rmap[q[0][0]][q[0][1]]=rm
+    while i<j:
+        i+=1
+        for k in range(4):
+            if (cfp[q[i][0]][q[i][1]]>>k) % 2 == 0:
+                if rmap[q[i][0]+oper[k][0]][q[i][1]+oper[k][1]]==0:
+                    q.append((q[i][0]+oper[k][0],q[i][1]+oper[k][1]))
+                    rmap[q[i][0]+oper[k][0]][q[i][1]+oper[k][1]]=rm
+                    j+=1
+    rmsz.append((j+1,rm))
+    rmszd[rm]=j+1
+    rm += 1
+
+rmcon={}
+rmconwall = {}
+for i in range(n):
+    for j in range(m):
+        if rmap[i][j] not in rmcon:
+            rmcon[rmap[i][j]] = set()
+        for k,op in enumerate(oper):
+            if i+op[0]>=0 and i+op[0]<=n-1 and j+op[1]>=0 and j+op[1]<=m-1:
+                if rmap[i][j]!=rmap[i+op[0]][j+op[1]]:
+                    rmcon[rmap[i][j]].add(rmap[i+op[0]][j+op[1]])
+                    if (rmap[i][j],rmap[i+op[0]][j+op[1]]) not in rmconwall:
+                        rmconwall[(rmap[i][j],rmap[i+op[0]][j+op[1]])]=(i,j,direction[k])
+                        rmconwall[(rmap[i+op[0]][j+op[1]],rmap[i][j])]=(i,j,direction[k])                        
+                    elif rmconwall[(rmap[i][j],rmap[i+op[0]][j+op[1]])][1]>j or \
+                    rmconwall[(rmap[i][j],rmap[i+op[0]][j+op[1]])][1]==j and \
+                    rmconwall[(rmap[i][j],rmap[i+op[0]][j+op[1]])][0]<i:
+                        rmconwall[(rmap[i][j],rmap[i+op[0]][j+op[1]])]=(i,j,direction[k])
+                        rmconwall[(rmap[i+op[0]][j+op[1]],rmap[i][j])]=(i,j,direction[k])
+
+rmsz = sorted(rmsz, reverse=True)
+
+res = 0
+wall_break = (0,2**31-1,'E')
+for rm in rmsz:
+    if rm[0]<res-rmsz[0][0]:
+        break
+    for j in rmcon[rm[1]]:
+        if res<rmszd[j]+rm[0]:
+            res = rmszd[j]+rm[0]
+            wall_break = rmconwall[(rm[1],j)]
+        elif res==rmszd[j]+rm[0]:
+            res = rmszd[j]+rm[0]
+            if wall_break[1]>rmconwall[(rm[1],j)][1] or wall_break[1]==rmconwall[(rm[1],j)][1] and wall_break[0]<rmconwall[(rm[1],j)][0] or \
+            wall_break[1]==rmconwall[(rm[1],j)][1] and wall_break[0]==rmconwall[(rm[1],j)][0] and wall_break[2]<rmconwall[(rm[1],j)][2]:
+                wall_break = rmconwall[(rm[1],j)]
+            
+fout.write(str(len(rmsz)-1)+'\n')
+fout.write(str(rmsz[0][0])+'\n')
+fout.write(str(res)+'\n')
+fout.write(str(wall_break[0]+1)+' '+str(wall_break[1]+1)+' '+wall_break[2]+'\n')
+
+fin.close()
+fout.close()

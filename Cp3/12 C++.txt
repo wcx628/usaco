@@ -1,0 +1,34 @@
+/*
+ID: george.34
+LANG: C++
+TASK: inflate
+*/
+
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+ifstream fin("inflate.in");
+ofstream fout("inflate.out");
+
+const short maxm = 10010;
+long best[maxm], m, n;
+
+int main()
+{
+    short i, j, len, pts;
+
+    fin >> m >> n;
+
+    for (j = 0; j <= m; j++)
+        best[j] = 0;
+
+    for (i = 0; i < n; i++) {
+        fin >> pts >> len;
+        for (j = len; j <= m; j++)
+            if (best[j-len] + pts > best[j])
+                best[j] = best[j-len] + pts;
+    }
+    fout << best[m] << endl; 
+}

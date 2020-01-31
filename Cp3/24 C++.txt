@@ -1,0 +1,74 @@
+/*
+ID: george.34
+LANG: C++
+PROG: ratios
+*/
+
+#include<iostream>
+#include<fstream>
+using namespace std;
+
+int main(){
+    int pm[3], gi[3][3], comp[3], fn[3];
+    ifstream cin("ratios.in");
+    ofstream cout("ratios.out");
+
+    for(int i=0; i<3; i++) cin >> pm[i];
+    for(int i=0; i<3; i++)
+        for(int j=0; j<3; j++)
+            cin >> gi[i][j];
+
+    bool q = true;
+    for(int i=0; i<101; i++){
+        for(int j=0; j<101; j++){
+            for(int k=0; k<101; k++){
+                bool f = false;
+                for(int l=0; l<3; l++){
+                    fn[l] = gi[0][l]*i+gi[1][l]*j+gi[2][l]*k;
+		    comp[l] = 0;
+                }
+                for(int l=0; l<3; l++){
+                    if(pm[l]==0 and fn[l]==0) comp[l]=1;
+                    else if(pm[l]==0 and fn[l]!=0){
+                        f = true;
+                        break;
+                    }
+                }
+                if (f) continue;
+                f = false;
+                int tmp = 0;
+                int sum = 0;
+                for(int l=0; l<3; l++) sum += comp[l];
+                if (sum==3) continue;
+                for(int l=0; l<3; l++){
+		    if(comp[l]==0){
+                        if(fn[l] % pm[l]!=0){
+                            f = true;
+                            break;
+                        }
+                        else if(tmp == 0){
+                            tmp = fn[l] / pm[l];
+                            if(tmp == 0){
+                                f = true;
+                                break;
+                            }
+                        }
+                        else if(tmp != fn[l] / pm[l]){
+                            f = true;
+                            break;
+                        }
+                    }
+                }
+                if (not f and tmp!=0){
+                    cout << i << ' ' << j << ' ' << k << ' ' << tmp << endl;
+                    q = false;
+                    break;
+                }
+            }
+            if (not q) break;
+        }
+        if (not q) break;
+    }
+    if (q) cout << "NONE" << endl;
+    return 0;
+}

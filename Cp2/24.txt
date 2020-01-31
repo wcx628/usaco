@@ -1,0 +1,54 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: lamps
+"""
+
+fin = open ('lamps.in', 'r')
+fout = open ('lamps.out', 'w')
+
+n = int(fin.readline())
+c = int(fin.readline())
+
+res = []
+
+lon = list(map(int,fin.readline().split()))
+loff = list(map(int, fin.readline().split()))
+
+g = False
+for i in range(2):
+    for j in range(2):
+        for k in range(2):
+            for l in range(2):
+                lstatus = [1]*n
+                if i == 1:
+                    lstatus = [1-x for x in lstatus]
+                if j == 1:
+                    lstatus = [1-lstatus[x] if x % 2==0 else lstatus[x] for x in range(n)]
+                if k == 1:
+                    lstatus = [1-lstatus[x] if x % 2==1 else lstatus[x] for x in range(n)]
+                if l == 1:
+                    lstatus = [1-lstatus[x] if x % 3==0 else lstatus[x] for x in range(n)]
+                f = True
+                for x in lon:
+                    if x!=-1 and lstatus[x-1]!=1:
+                        f = False
+                for x in loff:
+                    if x!=-1 and lstatus[x-1]!=0:
+                        f = False
+                if c<i+j+k+l or (c-(i+j+k+l)) % 2==1:
+                    f = False
+                if f:
+                    g = True
+                    res.append(''.join([str(x) for x in lstatus])+'\n')
+
+res = sorted(res)
+
+for r in res:
+    fout.write(r)
+
+if not g:
+    fout.write('IMPOSSIBLE'+'\n')
+
+fin.close()
+fout.close()

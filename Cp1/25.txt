@@ -1,0 +1,38 @@
+"""
+ID: george.34
+LANG: PYTHON3
+PROG: beads
+"""
+
+fin = open ('beads.in', 'r')
+fout = open ('beads.out', 'w')
+n = int(fin.readline().rstrip())
+s = fin.readline().rstrip()
+s = s+s+s
+lefts = 0
+ma = 0
+eqn = False
+for i in range(n):
+    if s[n+i]!=s[n+i+1] and (s[n+i]!='w' or s[n+i+1]!='w'):
+        mleft = 0
+        while s[n+i-mleft]=='w' and mleft<n:
+            mleft += 1
+        if mleft==n:
+            eqn = True
+            break
+        lefts = mleft
+        while (s[n+i-lefts]==s[n+i-mleft] or s[n+i-lefts]=='w') and lefts<n:
+            lefts += 1
+        mright = 0
+        while s[n+i+1+mright]=='w' and mright<n:
+            mright += 1
+        rights = mright
+        while (s[n+i+rights+1]==s[n+i+1+mright] or s[n+i+rights+1]=='w') and rights<n:
+            rights += 1
+        ma = max(ma, lefts+rights)
+if eqn or not lefts:
+    fout.write(str(n)+'\n')
+else:
+    fout.write(str(min(n,ma))+'\n')
+fin.close()
+fout.close()
